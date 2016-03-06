@@ -10,7 +10,7 @@ public class Cryptography {
 
     public static void main(String[] args) throws Exception {
         encryptedPassword = encryptPassword(password);
-        System.out.println("Encoded password of: " + password + " is: " + encryptedPassword);
+        System.out.println("Password hash of: " + password + " is: " + encryptedPassword);
         decryptPassword();
     }
 
@@ -26,17 +26,21 @@ public class Cryptography {
     }
 
     private static void decryptPassword() throws NoSuchAlgorithmException {
-        for (char anAlphabet : alphabet) {
-            for (char anAlphabet1 : alphabet) {
-                guess[0] = anAlphabet;
-                guess[1] = anAlphabet1;
-                String attempt = printGuess();
-//                    System.out.println("Attempt is: " + attempt);
-                StringBuilder encryptedPasswordAttempt = encryptPassword(attempt);
-//                    System.out.println("Encoded password of: " + attempt + " is: " + encryptedPasswordAttempt);
-                checkPassword(attempt, encryptedPasswordAttempt);
+        for (char firstLetter : alphabet) {
+            for (char secondLetter : alphabet) {
+                guess[0] = firstLetter;
+                guess[1] = secondLetter;
+                guessPassword();
             }
         }
+    }
+
+    private static void guessPassword() throws NoSuchAlgorithmException {
+        String attempt = printGuess();
+        StringBuilder encryptedPasswordAttempt = encryptPassword(attempt);
+//                    System.out.println("Attempt is: " + attempt);
+//                    System.out.println("Encoded password of: " + attempt + " is: " + encryptedPasswordAttempt);
+        validateHash(attempt, encryptedPasswordAttempt);
     }
 
     private static String printGuess() {
@@ -47,7 +51,7 @@ public class Cryptography {
         return guessAsString;
     }
 
-    private static void checkPassword(String attempt, StringBuilder encryptedPasswordAttempt) {
+    private static void validateHash(String attempt, StringBuilder encryptedPasswordAttempt) {
         if (encryptedPasswordAttempt.toString().equals(encryptedPassword.toString())) {
             System.out.println("You have found the password! It is: " + attempt);
             System.exit(0);
