@@ -1,0 +1,16 @@
+### Ignore pushing certain files to Git
+
+# Java #
+*.class
+
+# Package Files #
+*.jar
+
+# Directory-based project format #
+.idea/
+
+# Additional for IntelliJ #
+out/
+
+# OSX #
+.DS_Store

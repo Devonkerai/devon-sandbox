@@ -2,5 +2,5 @@ devon-sandbox
 =============
 
 This is my sandbox to do random stuff in.
-
-Flaskr is a tutorial of the microblog application 'Flask'.
+- Scripts - A bunch of random scripts.
+- CraftingCodeWorksop - Sandro Mancuso's Crafting Code Course
