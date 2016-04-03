@@ -7,32 +7,38 @@
 
 # Imports
 import os
+from datetime import date
 
 # Setup variables
-directory = '/Users/devon/Documents/Scripts/movieCounting'
-# directory = '/Volumes/My Passport/Movies'
 extensions = [".mkv", ".avi", ".mp4", ".wmv", ".mpg"]
+directory = '/Volumes/My Passport/Movies/'
+filename = "Movielist-%s.txt" % date.today()
 count = 0
 
-with open("movielist.txt", "w") as movieListFile:
+# Functions
+def writeMovieNamesIntoFile(name):
+	global count
+	movieExt = name[-4:]
+	if movieExt in extensions:
+		count += 1
+		movieListFile.write(name + "\n")
+
+# Main
+# Write all movie names in file.
+with open(directory+filename, "w") as movieListFile:
 
 	# For movies not in a subfolder
 	for name in os.listdir(directory):
-		movieExt = name[-4:]
-		if movieExt in extensions:
-			count += 1
-			movieListFile.write(name + "\n")
+		writeMovieNamesIntoFile(name)
 
 		# For movies in a subfolder
 		if os.path.isdir(name):
 			newDir = os.path.join(directory, name)
 			for newName in os.listdir(newDir):
-				movieExt = newName[-4:]
-				if movieExt in extensions:
-					count += 1
-					movieListFile.write(newName + "\n")
-	
+				writeMovieNamesIntoFile(newName)
+
 	movieListFile.write("\nTotal number of movies: %s" % count)
 
 
 print "Total number of movies: %s" % count
+print "Movie list file: %s" % directory+filename
