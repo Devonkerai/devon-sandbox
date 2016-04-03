@@ -29,12 +29,10 @@ public class Cryptography {
     }
 
     private static void decryptPassword() throws NoSuchAlgorithmException {
-
-
         prefixBySize.add(Collections.singletonList(""));
-
         String pass = null;
         int prefixCounter = 0;
+
         while (pass == null) {
             final List<String> prefixes = prefixBySize.get(prefixCounter);
             pass = attemptDecrypt(prefixes);
@@ -53,7 +51,6 @@ public class Cryptography {
                     return tempPass;
                 }
                 failedAttempts.add(tempPass);
-                newprefix = prefix;
             }
         }
         prefixBySize.add(failedAttempts);
@@ -61,17 +58,17 @@ public class Cryptography {
     }
 
     private static boolean guessPassword(String attempt) throws NoSuchAlgorithmException {
-        String encryptedPasswordAttempt = encryptPassword(attempt);
-//        System.out.println("Encoded password of: " + attempt + " is: " + encryptedPasswordAttempt);
-        if (validateHash(encryptedPasswordAttempt)) {
-            System.out.println("You have found the password! It is: " + attempt + ". It has the hash: " + encryptedPasswordAttempt);
+        String encryptedAttempt = encryptPassword(attempt);
+//        System.out.println("Encoded password of: " + attempt + " is: " + encryptedAttempt);
+        if (validateHash(encryptedAttempt)) {
+            System.out.println("You have found the password! It is: " + attempt + ". It has the hash: " + encryptedAttempt);
             return true;
         }
         return false;
     }
 
-    private static boolean validateHash(String encryptedPasswordAttempt) {
+    private static boolean validateHash(String encryptedAttempt) {
 
-        return encryptedPasswordAttempt.equals(encryptedPassword);
+        return encryptedAttempt.equals(encryptedPassword);
     }
 }
