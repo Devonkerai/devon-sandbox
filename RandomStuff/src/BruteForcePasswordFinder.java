@@ -1,20 +1,37 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Cryptography {
+public class BruteForcePasswordFinder {
 
-    private static String password = "AAB";
+    private static String password = "7yB5";
     private static String encryptedPassword;
     private static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-    private static List<List<String>> prefixBySize = new ArrayList<>();
+    private static List<List<String>> prefixBySize = new ArrayList<>(0);
 
     public static void main(String[] args) throws Exception {
+        getPassword();
         encryptedPassword = encryptPassword(password);
         System.out.println("Your password is: " + password + ". It's hash is: " + encryptedPassword);
+        long startTime = System.currentTimeMillis();
         decryptPassword();
+        long stopTime = System.currentTimeMillis();
+        long timeTaken = stopTime - startTime;
+        System.out.println("It took: " + timeTaken + "ms.");
+    }
+
+    private static void getPassword() throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        String input;
+        System.out.println("Please type in your password. It must be alphanumeric: ");
+        input = bufferedReader.readLine();
+        // Validate input is alphanumeric.
+        password = input;
     }
 
     private static String encryptPassword(String password) throws NoSuchAlgorithmException {
@@ -30,13 +47,11 @@ public class Cryptography {
 
     private static void decryptPassword() throws NoSuchAlgorithmException {
         prefixBySize.add(Collections.singletonList(""));
-        String pass = null;
-        int prefixCounter = 0;
 
+        String pass = null;
         while (pass == null) {
-            final List<String> prefixes = prefixBySize.get(prefixCounter);
+            final List<String> prefixes = prefixBySize.get(0);
             pass = attemptDecrypt(prefixes);
-            prefixCounter++;
         }
     }
 
@@ -51,9 +66,10 @@ public class Cryptography {
                     return tempPass;
                 }
                 failedAttempts.add(tempPass);
+                newprefix = prefix;
             }
         }
-        prefixBySize.add(failedAttempts);
+        prefixBySize.add(0, failedAttempts);
         return null;
     }
 
@@ -68,7 +84,6 @@ public class Cryptography {
     }
 
     private static boolean validateHash(String encryptedAttempt) {
-
         return encryptedAttempt.equals(encryptedPassword);
     }
 }
