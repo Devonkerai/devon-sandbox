@@ -9,15 +9,15 @@ import java.util.List;
 
 public class BruteForcePasswordFinder {
 
-    private static String password = "7yB5";
+    private static String password;
     private static String encryptedPassword;
-    private static char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
-    private static List<List<String>> prefixBySize = new ArrayList<>(0);
+    private static final char[] validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+    private static final List<List<String>> prefixBySize = new ArrayList<>(0);
 
     public static void main(String[] args) throws Exception {
         getPassword();
         encryptedPassword = encryptPassword(password);
-        System.out.println("Your password is: " + password + ". It's hash is: " + encryptedPassword);
+        System.out.println("It has the hash: " + encryptedPassword);
         long startTime = System.currentTimeMillis();
         decryptPassword();
         long stopTime = System.currentTimeMillis();
@@ -25,15 +25,42 @@ public class BruteForcePasswordFinder {
         System.out.println("It took: " + timeTaken + "ms.");
     }
 
+    // Get password via Stdin.
     private static void getPassword() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        String input;
-        System.out.println("Please type in your password. It must be alphanumeric: ");
-        input = bufferedReader.readLine();
-        // Validate input is alphanumeric.
-        password = input;
+        System.out.print("Please type in your password. It must be alphanumeric: ");
+        String inputPassword = bufferedReader.readLine();
+        validateInputPassword(inputPassword);
     }
 
+    // Validate entered password that it contains only valid characters.
+    private static void validateInputPassword(String enteredPassword) throws IOException {
+        final int lengthOfInput = enteredPassword.length();
+        final char[] inputArray = enteredPassword.toCharArray();
+        int numberofValidCharsInEnteredPassword = 0;
+
+        if (lengthOfInput > 0) {
+            for (char c : inputArray) {
+                for (char alpha : validChars) {
+                    if (c == alpha) {
+                        numberofValidCharsInEnteredPassword++;
+                    }
+                }
+            }
+            if (numberofValidCharsInEnteredPassword == lengthOfInput) {
+                System.out.println("Your password is: " + enteredPassword);
+                password = enteredPassword;
+            } else {
+                System.out.println("Your password is not valid! Please try again.");
+                getPassword();
+            }
+        } else {
+            System.out.println("Your password is not valid! Please try again.");
+            getPassword();
+        }
+    }
+
+    // Encrypt password using SHA-256.
     private static String encryptPassword(String password) throws NoSuchAlgorithmException {
         StringBuilder hash = new StringBuilder();
         MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
@@ -59,14 +86,12 @@ public class BruteForcePasswordFinder {
         List<String> failedAttempts = new ArrayList<>();
 
         for (String prefix : prefixes) {
-            String newprefix = prefix;
-            for (char c : alphabet) {
-                String tempPass = newprefix += c;
+            for (char c : validChars) {
+                String tempPass = prefix + c;
                 if (guessPassword(tempPass)) {
                     return tempPass;
                 }
                 failedAttempts.add(tempPass);
-                newprefix = prefix;
             }
         }
         prefixBySize.add(0, failedAttempts);
@@ -77,7 +102,7 @@ public class BruteForcePasswordFinder {
         String encryptedAttempt = encryptPassword(attempt);
 //        System.out.println("Encoded password of: " + attempt + " is: " + encryptedAttempt);
         if (validateHash(encryptedAttempt)) {
-            System.out.println("You have found the password! It is: " + attempt + ". It has the hash: " + encryptedAttempt);
+            System.out.println("You have found the password! It is: " + attempt);
             return true;
         }
         return false;
