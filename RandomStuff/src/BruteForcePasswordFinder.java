@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A program to find an alphanumeric password via brute force guessing.
+ * When running, use these VM arguments: -Xms128M -Xmx4096M -XX:-UseGCOverheadLimit.
+ */
 public class BruteForcePasswordFinder {
 
     private static String password;
